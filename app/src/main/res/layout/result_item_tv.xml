@@ -15,5 +15,15 @@
         android:background="@drawable/rectangular_bg"
         android:layout_margin="6dp"
         android:textStyle="bold"/>
+    <ImageView
+        android:id="@+id/delete_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@+id/item_tv"
+        app:layout_constraintBottom_toBottomOf="@+id/item_tv"
+        app:layout_constraintRight_toRightOf="parent"
+        android:src="@drawable/ic_outline_delete_forever"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

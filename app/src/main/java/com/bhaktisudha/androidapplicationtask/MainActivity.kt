@@ -2,12 +2,14 @@ package com.bhaktisudha.androidapplicationtask
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bhaktisudha.androidapplicationtask.adapter.ItemClickInterface
 import com.bhaktisudha.androidapplicationtask.adapter.ResultAdapter
 import com.bhaktisudha.androidapplicationtask.databinding.ActivityMainBinding
 import com.bhaktisudha.androidapplicationtask.resultModel.ResultModelItem
@@ -16,7 +18,7 @@ import com.bhaktisudha.androidapplicationtask.viewmodels.MainViewModelFactory
 import java.util.*
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),ItemClickInterface {
     lateinit var binding : ActivityMainBinding
     lateinit var mainViewModel: MainViewModel
     lateinit var  resultAdapter: ResultAdapter
@@ -25,12 +27,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this,R.layout.activity_main)
         binding.recycler.layoutManager = LinearLayoutManager(this)
-        resultAdapter = ResultAdapter(this)
+        resultAdapter = ResultAdapter(this,this)
         binding.recycler.adapter =resultAdapter
         val repository = (application as ResultApplication).repository
         mainViewModel = ViewModelProvider(this,MainViewModelFactory(repository)).get(MainViewModel::class.java)
         mainViewModel.results.observe(this,{
             Log.d("FETCHRESULT",it.toString())
+            Toast.makeText(this,it.size.toString(),Toast.LENGTH_SHORT).show()
             it.forEach {
                 var resultModelItem = ResultModelItem()
                 resultModelItem.firstName = it.firstName.toString()
@@ -58,7 +61,10 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    items?.removeAt(viewHolder.adapterPosition)
+                    //items?.removeAt(viewHolder.adapterPosition)
+                    mainViewModel.deleteResults(items.get(viewHolder.adapterPosition))
+                    mainViewModel.updateResults(items.get(viewHolder.adapterPosition))
+                    Toast.makeText(this@MainActivity,"${items.get(viewHolder.adapterPosition).firstName}Deleted",Toast.LENGTH_SHORT).show()
                     resultAdapter.notifyItemRemoved(viewHolder.adapterPosition)
 
                 }
@@ -85,5 +91,11 @@ class MainActivity : AppCompatActivity() {
         val itemTouchHelper = ItemTouchHelper(simpleItemTouchCallback)
         itemTouchHelper.attachToRecyclerView(binding.recycler)
 
+    }
+
+    override fun onItemClicked(results: ResultModelItem) {
+
+        mainViewModel.deleteResults(results)
+        Toast.makeText(this,"${results.firstName} Deleted",Toast.LENGTH_SHORT).show()
     }
 }

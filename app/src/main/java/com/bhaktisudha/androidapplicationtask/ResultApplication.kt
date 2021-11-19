@@ -16,6 +16,6 @@ class ResultApplication: Application() {
     private fun initialize() {
         val apiService = ApiProvider.getInstance().create(ApiService::class.java)
         val database = ResultDatabase.getDatabase(applicationContext)
-        repository = ResultRepository(apiService,database)
+        repository = ResultRepository(apiService,database,applicationContext)
     }
 }

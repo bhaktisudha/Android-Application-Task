@@ -1,9 +1,8 @@
 package com.bhaktisudha.androidapplicationtask.db
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
+import androidx.room.*
 import com.bhaktisudha.androidapplicationtask.resultModel.ResultModelItem
+
 
 @Dao
 interface ResultDao {
@@ -13,4 +12,14 @@ interface ResultDao {
 
     @Query("SELECT * FROM results")
     suspend fun getResults() : List<ResultModelItem>
+
+    @Query("DELETE FROM results")
+    fun deleteAll()
+
+    @Delete
+    suspend fun deleteResponseItem(results: ResultModelItem)
+
+    @Update
+    fun update(results: ResultModelItem)
+
 }
